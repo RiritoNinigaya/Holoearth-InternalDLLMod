@@ -48,6 +48,19 @@ void InitUnity_IL2Cpp() {
 	I::Init(GetModuleHandle((LPCSTR)"GameAssembly.dll"), I::Mode::Il2Cpp);
 	I::ThreadAttach();
 }
+void GetCameraName() {
+	auto instance = UnityResolve::UnityType::Camera::GetMain();
+	if (!instance) {
+		MessageBoxA(0, "Camera Not Founded", "Holoearth", MB_ICONERROR | MB_OK);
+		exit(321);
+	}
+	std::string m = std::format("{}", instance->GetName());
+	const char* UnityCameraMainName = m.c_str();
+	cs::color_string str(UnityCameraMainName);
+	cs::color_string color_str(str);
+	color_str.use(color(155, 45, 50));
+	cout << "Name Of Camera: " << color_str << endl;
+}
 LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 
@@ -93,7 +106,7 @@ HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT 
 		else
 			return oPresent(pSwapChain, SyncInterval, Flags);
 	}
-	ImGuiWindowFlags fl = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar;
+	ImGuiWindowFlags fl = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar;
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
@@ -108,16 +121,30 @@ HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT 
 			auto instance = UnityResolve::UnityType::Camera::GetMain();
 			if (!instance) {
 				MessageBoxA(0, "Camera Not Founded", "Holoearth", MB_OK | MB_ICONERROR);
+				exit(3021);
 			}
 			instance->SetFoV(max_v);
-			std::string m = std::format("{}", instance->GetName());
-			const char* UnityCameraMainName = m.c_str();
-			cs::color_string str(UnityCameraMainName);
-			cs::color_string color_str(str);
-			color_str.use(color(155, 45, 50));
-			cout << "Name Of Camera: " << color_str << endl;
 		}
 		ImGui::EndMenu();
+	}
+	if (ImGui::BeginMenu("Camera Function Menu")) 
+	{
+		//static ImVec4 color = ImVec4(114.0f / 255.0f, 144.0f / 255.0f, 154.0f / 255.0f, 200.0f / 255.0f);
+		ImGui::TextColored(ImVec4(100.f, 230.f, 0.f, 255.f), "This Is Camera Function Menu while Initializated Any Camera");
+		if (ImGui::Button("Destroy Camera(Arrivederci Camera-Kun :>)")) 
+		{
+			auto instance = UnityResolve::UnityType::Camera::GetMain(); //Just Instance!!!
+			instance->GetGameObject()->Destroy(UnityResolve::UnityType::Camera::GetMain()); //Getting Main Function for GameObject :D
+		}
+		ImGui::EndMenu();
+	}
+	if (ImGui::BeginMenuBar()) 
+	{
+		if (ImGui::BeginMenu("Exit")) {
+			exit(0);
+			ImGui::EndMenu();
+		}
+		ImGui::EndMenuBar();
 	}
 	EndAndRender();
 	pContext->OMSetRenderTargets(1, &mainRenderTargetView, NULL);
