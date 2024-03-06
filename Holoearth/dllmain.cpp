@@ -8,7 +8,7 @@ void Alloc_Console() {
     SetConsoleTitleA("Holoearth Internal Cheat DEBUGGER by RiritoNinigaya");
     FILE* fp;
     freopen_s(&fp, "CONOUT$", "w", stdout);
-    cout << (("SUCCESS TO INITIALIZATED CONSOLE"_cs << color(0x3EF52A))) << endl;
+    cout << (("CONSOLE IS CREATED"_cs << color(0x3EF52A))) << endl;
 }
 DWORD WINAPI Thread() {
     Alloc_Console();
